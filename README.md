@@ -1,1 +1,3 @@
-# AndroidCalculatorDemo
+#AndroidCalculatorDemo
+
+Use JavaCalculatorDemo cord.
