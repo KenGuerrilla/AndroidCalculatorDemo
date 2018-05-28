@@ -1,19 +1,33 @@
 package kenguerrilla.itl.androidcalculatordemo;
 
-public class Calculator {
+public class CalculatorModel {
 
 	private Double sum;
 	private String keyingLog="";
-	private actionMode mode;
+	private ActionMode mode;
+	public enum actionModeCa {PLUS,SUB,MUL,DIV,NONE}
+	private static CalculatorModel instance;
 
-	public enum actionMode{	Plus,Sub,Mul,Div,None; }
-	
-	Calculator(){
+
+	public actionModeCa getAct(){
+		return actionModeCa.SUB;
+	}
+
+
+	private CalculatorModel(){
 		sum = 0.0;
-		mode = actionMode.None;
+		mode = ActionMode.NONE;
+	}
+
+	public static CalculatorModel getInstance(){
+
+		if(instance == null){
+			instance = new CalculatorModel();
+		}
+		return instance;
 	}
 	
-	public Double checkIn(Double num,actionMode newMode){
+	public Double checkIn(Double num,ActionMode newMode){
 		
 		if(num.isNaN()){
 			mode = newMode;
@@ -26,7 +40,7 @@ public class Calculator {
 		}		
 	}
 	
-	public String checkIn(String num,actionMode newMode){
+	public String checkIn(String num,ActionMode newMode){
 		
 		if(num.equals("")){
 			mode = newMode;
@@ -53,27 +67,27 @@ public class Calculator {
 	
 		switch(mode){
 		
-			case None:
+			case NONE:
 				keyingRecord(checkType(d));
 				sum = d;
 				break;
 				
-			case Plus:
+			case PLUS:
 				keyingRecord("+"+checkType(d));
 				sum += d;
 				break;				
 				
-			case Sub:
+			case SUB:
 				keyingRecord("-"+checkType(d));
 				sum -= d;
 				break;
 				
-			case Mul:
+			case MUL:
 				keyingRecord("*"+checkType(d));
 				sum *= d;
 				break;	
 				
-			case Div:
+			case DIV:
 				keyingRecord("/"+checkType(d));
 				sum /= d;
 				break;
@@ -90,24 +104,13 @@ public class Calculator {
 		
         sum = 0.0;
         keyingLog ="";
-        mode = actionMode.None;
+        mode = ActionMode.NONE;
 
 	}
 	
 	public String getKeyingLog(){
 		
 		return keyingLog;
-	}
-	
-	public actionMode getMode(){
-
-		return mode;
-	}
-	
-	public String getResult(){
-		
-		mode = actionMode.None;
-		return checkType(sum);
 	}
 
 }

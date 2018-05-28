@@ -7,19 +7,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-public class CalculatorMain extends AppCompatActivity implements OnClickListener {
+public class CalculatorView extends AppCompatActivity implements ICalculatorView, OnClickListener{
 
     private TextView btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine;
     private TextView btnPlus, btnSub, btnMul, btnDiv;
     private TextView btnClear, btnEqual, btnDot;
-    private TextView viewProcess, viewResult;
+    public TextView viewProcess, viewResult;
 
-    String resetProcess = "0.";
-
-    String keyingBuffer="";
-    String resultBuffer="";
-
-    private Calculator cal = new Calculator();
+    private IPresenter ip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +23,11 @@ public class CalculatorMain extends AppCompatActivity implements OnClickListener
 
         findView();
         setOnListener();
-        reset();
+        ip = Presenter.getInstance(this); // 記得將Activity傳出去，new要是new一個新的那就不對了
+
+        clearVIew();
+
+
 
     }
 
@@ -38,104 +37,78 @@ public class CalculatorMain extends AppCompatActivity implements OnClickListener
 
         switch (id){
 
+            // 向Presenter回應Button事件
             case R.id.view_btn_zero:
-                keyingNumber("0");
+                ip.keyingNumber("0");
                 break;
 
             case R.id.view_btn_1:
-                keyingNumber("1");
+                ip.keyingNumber("1");
                 break;
 
             case R.id.view_btn_2:
-                keyingNumber("2");
+                ip.keyingNumber("2");
                 break;
 
             case R.id.view_btn_3:
-                keyingNumber("3");
+                ip.keyingNumber("3");
                 break;
 
             case R.id.view_btn_4:
-                keyingNumber("4");
+                ip.keyingNumber("4");
                 break;
 
             case R.id.view_btn_5:
-                keyingNumber("5");
+                ip.keyingNumber("5");
                 break;
 
             case R.id.view_btn_6:
-                keyingNumber("6");
+                ip.keyingNumber("6");
                 break;
 
             case R.id.view_btn_7:
-                keyingNumber("7");
+                ip.keyingNumber("7");
                 break;
 
             case R.id.view_btn_8:
-                keyingNumber("8");
+                ip.keyingNumber("8");
                 break;
 
             case R.id.view_btn_9:
-                keyingNumber("9");
+                ip.keyingNumber("9");
                 break;
 
             case R.id.view_btn_dot:
-                keyingNumber(".");
+                ip.keyingNumber(".");
                 break;
 
             case R.id.view_btn_plus:
-                writer(Calculator.actionMode.Plus);
+                ip.setMode(ActionMode.PLUS);
                 break;
 
             case R.id.view_btn_sub:
-                writer(Calculator.actionMode.Sub);
+                ip.setMode(ActionMode.SUB);
                 break;
 
             case R.id.view_btn_mul:
-                writer(Calculator.actionMode.Mul);
+                ip.setMode(ActionMode.MUL);
                 break;
 
             case R.id.view_btn_div:
-                writer(Calculator.actionMode.Div);
+                ip.setMode(ActionMode.DIV);
                 break;
 
             case R.id.view_btn_equal:
-                writer(Calculator.actionMode.None);
+                ip.setMode(ActionMode.NONE);
                 break;
 
             case R.id.view_btn_clear:
-                reset();
+                ip.clearStatus();
                 break;
 
         }
-
     }
 
-
-    private void keyingNumber(String s){
-
-        keyingBuffer += s;
-        viewResult.setText(keyingBuffer);
-
-    }
-
-    private void reset(){
-
-        keyingBuffer = "";
-        resultBuffer = "";
-        viewProcess.setText(resetProcess);
-        viewResult.setText("");
-        cal.reset();
-
-    }
-
-    private void writer(Calculator.actionMode mode){
-
-        resultBuffer = cal.checkIn(keyingBuffer,mode);
-        viewResult.setText(resultBuffer);
-        viewProcess.setText(cal.getKeyingLog());
-        keyingBuffer = "";
-
-    }
 
     private void setOnListener() {
 
@@ -150,15 +123,15 @@ public class CalculatorMain extends AppCompatActivity implements OnClickListener
         btnEight.setOnClickListener(this);
         btnNine.setOnClickListener(this);
 
-        btnDot.setOnClickListener(this);
-
         btnPlus.setOnClickListener(this);
         btnSub.setOnClickListener(this);
         btnMul.setOnClickListener(this);
         btnDiv.setOnClickListener(this);
-
-        btnClear.setOnClickListener(this);
         btnEqual.setOnClickListener(this);
+        btnClear.setOnClickListener(this);
+
+        btnDot.setOnClickListener(this);
+
 
     }
 
@@ -186,7 +159,22 @@ public class CalculatorMain extends AppCompatActivity implements OnClickListener
         viewProcess = findViewById(R.id.textView_process);
         viewResult = findViewById(R.id.textView_result);
 
-
-
     }
+
+    @Override
+    public void clearVIew() {
+        setResultToView("0.");
+        setProcessToView("0.");
+    }
+
+    @Override
+    public void setResultToView(String s) {
+        viewResult.setText(s);
+    }
+
+    @Override
+    public void setProcessToView(String s) {
+        viewProcess.setText(s);
+    }
+
 }
